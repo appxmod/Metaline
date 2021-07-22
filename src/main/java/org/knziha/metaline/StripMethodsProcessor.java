@@ -61,19 +61,19 @@ public final class StripMethodsProcessor extends AbstractProcessor {
 	
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-		Set<? extends Element> fields = roundEnv.getElementsAnnotatedWith(StripMethods.class);
-		for (Element field : fields) {
+		Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(StripMethods.class);
+		for (Element field : elements) {
 			StripMethods annotation = field.getAnnotation(StripMethods.class);
 			if (!annotation.strip()) {
 				continue;
 			}
-			String key = annotation.key();
+			String[] keys = annotation.keys();
 			ElementKind KIND = field.getKind();
 			CMN.Log("StripMethods::", annotation, KIND);
 			if(KIND == ElementKind.CLASS) {
 				ArrayList<JCTree> defs;
 				JCTree.JCClassDecl laDcl = (JCTree.JCClassDecl) elementUtils.getTree(field);
-				if (trees !=null) {
+				if (trees!=null) {
 					TreePath treePath = trees.getPath(field);
 					JCTree.JCCompilationUnit compileUnit = (JCTree.JCCompilationUnit) treePath.getCompilationUnit();
 					int imports = compileUnit.getImports().size();
@@ -82,7 +82,7 @@ public final class StripMethodsProcessor extends AbstractProcessor {
 					for (int i = 0, len=defs.size(); i <= len && imports>0; i++) {
 						JCTree obj = defs.get(i);
 						if (obj instanceof JCTree.JCImport) {
-							if (obj.toString().contains(key)) {
+							if (keyInString(keys, obj)) {
 								defs.remove(i); i--; len--;
 							}
 							imports--;
@@ -99,7 +99,7 @@ public final class StripMethodsProcessor extends AbstractProcessor {
 					//CMN.Log("member::", member);
 					boolean b1 = member instanceof JCTree.JCMethodDecl;
 					if (b1) {
-						if (((JCTree.JCMethodDecl) member).getName().toString().contains(key))
+						if (keyInString(keys, ((JCTree.JCMethodDecl) member).getName()))
 						{
 							defs.remove(i);
 							continue;
@@ -107,14 +107,14 @@ public final class StripMethodsProcessor extends AbstractProcessor {
 					}
 					if (member instanceof JCTree.JCVariableDecl) {
 						//if (((JCTree.JCVariableDecl) member).getName().toString().contains(key))
-						if (member.toString().contains(key))
+						if (keyInString(keys, member))
 						{
 							defs.remove(i);
 							continue;
 						}
 					}
 					if (member instanceof JCTree.JCClassDecl) {
-						if (((JCTree.JCClassDecl) member).getSimpleName().toString().contains(key))
+						if (keyInString(keys, ((JCTree.JCClassDecl) member).getSimpleName()))
 						{
 							defs.remove(i);
 							continue;
@@ -122,11 +122,16 @@ public final class StripMethodsProcessor extends AbstractProcessor {
 					}
 					if (b1) {
 						JCTree.JCMethodDecl metDcl = (JCTree.JCMethodDecl) member;
+						StripMethods metAnnot = metDcl.sym.getAnnotation(StripMethods.class);
+						if (metAnnot!=null && metAnnot.strip()) {
+							defs.remove(i);
+							continue;
+						}
 						if (metDcl.body!=null) {
 							//CMN.Log("metDcl.body::", metDcl.body);
 							ArrayList<JCTree.JCStatement> statements = new ArrayList<>(metDcl.body.stats);
 							for (int j = statements.size()-1; j >= 0; j--) {
-								if (statements.get(j).toString().contains(key))
+								if (keyInString(keys, statements.get(j)))
 								{
 									statements.remove(j);
 								}
@@ -140,5 +145,12 @@ public final class StripMethodsProcessor extends AbstractProcessor {
 		}
 		
 		return true;
+	}
+	
+	private boolean keyInString(String[] keys, Object text) {
+		for (int i = 0; i < keys.length; i++) {
+			if (text.toString().contains(keys[i])) return true;
+		}
+		return false;
 	}
 }

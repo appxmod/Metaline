@@ -55,13 +55,13 @@ Usage :
 ## 三、删除无用方法 | Strip / Remove Methods
 ### &ensp; 比如删除 androidx/appcompat 支持库中的 NightMode：
 - ```javascript
-	@StripMethods(key="Night")
+	@StripMethods(keys="Night")
 	public class AppCompatActivity
 	...
-	@StripMethods(key="Night")
+	@StripMethods(keys="Night")
 	public abstract class AppCompatDelegate
 	...
-	@StripMethods(key="Night")
+	@StripMethods(keys="Night")
 	class AppCompatDelegateImpl 
 	...
 	// not perfect. in this case you still need to modify 
