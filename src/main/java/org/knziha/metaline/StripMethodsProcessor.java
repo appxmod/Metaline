@@ -9,6 +9,7 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.List;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -24,19 +25,34 @@ import javax.lang.model.element.TypeElement;
 //@AutoService(Processor.class)
 @SupportedAnnotationTypes({"org.knziha.metaline.StripMethods"})
 public final class StripMethodsProcessor extends AbstractProcessor {
-	
 	private JavacElements elementUtils;
 	private TreeMaker maker;
 	private Context context;
-	private Trees _trees;
+	private Trees trees;
 	
 	@Override
 	public void init(final ProcessingEnvironment procEnv) {
 		super.init(procEnv);
-		JavacProcessingEnvironment javacProcessingEnv = (JavacProcessingEnvironment) procEnv;
-		this.elementUtils = javacProcessingEnv.getElementUtils();
-		this.maker = TreeMaker.instance(context=javacProcessingEnv.getContext());
-		this._trees = Trees.instance(procEnv);
+		this.elementUtils = (JavacElements) procEnv.getElementUtils();
+		// org.gradle.api.internal.tasks.compile.processing.IncrementalProcessingEnvironment
+		// com.sun.tools.javac.processing.JavacProcessingEnvironment
+		JavacProcessingEnvironment jcEnv = null;
+		if (procEnv instanceof JavacProcessingEnvironment) {
+			jcEnv = (JavacProcessingEnvironment) procEnv;
+		} else {
+			try {
+				Field f = procEnv.getClass().getDeclaredField("delegate");
+				f.setAccessible(true);
+				jcEnv = (JavacProcessingEnvironment) f.get(procEnv);
+				// CMN.Log(jcEnv);
+			} catch (Exception e) {
+				CMN.Log(e);
+			}
+		}
+		if (jcEnv!=null) {
+			this.maker = TreeMaker.instance(context=jcEnv.getContext());
+			this.trees = Trees.instance(jcEnv);
+		}
 	}
 	
 	@Override public SourceVersion getSupportedSourceVersion() {
@@ -55,24 +71,25 @@ public final class StripMethodsProcessor extends AbstractProcessor {
 			ElementKind KIND = field.getKind();
 			CMN.Log("StripMethods::", annotation, KIND);
 			if(KIND == ElementKind.CLASS) {
-				// remove all methods
+				ArrayList<JCTree> defs;
 				JCTree.JCClassDecl laDcl = (JCTree.JCClassDecl) elementUtils.getTree(field);
-				TreePath treePath = _trees.getPath(field);
-				JCTree.JCCompilationUnit compileUnit = (JCTree.JCCompilationUnit) treePath.getCompilationUnit();
-				int imports = compileUnit.getImports().size();
-				ArrayList<JCTree> defs = new ArrayList<>(compileUnit.defs);
-				//CMN.Log("imports::", compileUnit.getImports());
-				for (int i = 0, len=defs.size(); i <= len && imports>0; i++) {
-					JCTree obj = defs.get(i);
-					if (obj instanceof JCTree.JCImport) {
-						if (obj.toString().contains(key)) {
-							defs.remove(i); i--; len--;
+				if (trees !=null) {
+					TreePath treePath = trees.getPath(field);
+					JCTree.JCCompilationUnit compileUnit = (JCTree.JCCompilationUnit) treePath.getCompilationUnit();
+					int imports = compileUnit.getImports().size();
+					defs = new ArrayList<>(compileUnit.defs);
+					//CMN.Log("imports::", compileUnit.getImports());
+					for (int i = 0, len=defs.size(); i <= len && imports>0; i++) {
+						JCTree obj = defs.get(i);
+						if (obj instanceof JCTree.JCImport) {
+							if (obj.toString().contains(key)) {
+								defs.remove(i); i--; len--;
+							}
+							imports--;
 						}
-						imports--;
 					}
+					compileUnit.defs = List.from(defs);
 				}
-				compileUnit.defs = List.from(defs);
-				
 				//CMN.Log(laDcl.typarams, laDcl.mods, laDcl.implementing, laDcl.sym);
 				//CMN.Log("laDcl::", field, laDcl, laDcl.getMembers());
 				//CMN.Log("defs::", laDcl.defs);

@@ -6,6 +6,7 @@ import com.google.javascript.jscomp.CompilerOptions;
 import com.google.javascript.jscomp.Result;
 import com.google.javascript.jscomp.SourceFile;
 import com.squareup.javapoet.TypeName;
+import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.model.JavacElements;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
@@ -35,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -59,9 +61,23 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 	@Override
 	public void init(final ProcessingEnvironment procEnv) {
 		super.init(procEnv);
-		JavacProcessingEnvironment javacProcessingEnv = (JavacProcessingEnvironment) procEnv;
-		this.elementUtils = javacProcessingEnv.getElementUtils();
-		this.maker = TreeMaker.instance(context=javacProcessingEnv.getContext());
+		this.elementUtils = (JavacElements) procEnv.getElementUtils();
+		JavacProcessingEnvironment jcEnv = null;
+		if (procEnv instanceof JavacProcessingEnvironment) {
+			jcEnv = (JavacProcessingEnvironment) procEnv;
+		} else {
+			try {
+				Field f = procEnv.getClass().getDeclaredField("delegate");
+				f.setAccessible(true);
+				jcEnv = (JavacProcessingEnvironment) f.get(procEnv);
+				// CMN.Log(jcEnv);
+			} catch (Exception e) {
+				CMN.Log(e);
+			}
+		}
+		if (jcEnv!=null) {
+			this.maker = TreeMaker.instance(context=jcEnv.getContext());
+		}
 	}
 	
 	@Override public SourceVersion getSupportedSourceVersion() {

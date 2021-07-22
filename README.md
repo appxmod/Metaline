@@ -23,7 +23,7 @@ Usage :
 	  Like Good 
 		Old Days.
  	*/
-	@Multiline static String text;```
+	@Metaline static String text;```
 ### &ensp; 无缝编译JS： | Compile Javascript
 - ```js
 	// use Google Closure Compiler to compile your javascript snippets
@@ -81,6 +81,7 @@ Usage :
 
 > &ensp;“The following annotation processors are not **incremental**: Metaline.jar (project :Metaline).Make sure all annotation processors are incremental to improve your build speed.”   
 > &ensp;  
+> &ensp;I fixed the warning. but is incremental compilation actually enabled?
 &ensp;&ensp;In addition, put strings in your code will grow your app's size.  
 
  
