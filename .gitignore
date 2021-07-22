@@ -1,0 +1,3 @@
+build
+#google's closure compiler
+*.jar
