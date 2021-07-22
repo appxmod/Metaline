@@ -49,7 +49,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 
 
-@SupportedAnnotationTypes({"org.adrianwalker.multilinestring.Multiline"})
+@SupportedAnnotationTypes({"org.knziha.metaline.Metaline"})
 public final class JavacMetalineProcessor extends AbstractProcessor {
 	
 	private JavacElements elementUtils;

@@ -22,7 +22,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 
 //@AutoService(Processor.class)
-@SupportedAnnotationTypes({"org.adrianwalker.multilinestring.StripMethods"})
+@SupportedAnnotationTypes({"org.knziha.metaline.StripMethods"})
 public final class StripMethodsProcessor extends AbstractProcessor {
 	
 	private JavacElements elementUtils;

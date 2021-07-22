@@ -11,7 +11,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 
 //@AutoService(Processor.class)
-@SupportedAnnotationTypes({"org.adrianwalker.multilinestring.Multiline"})
+@SupportedAnnotationTypes({"org.knziha.metaline.Metaline"})
 public final class MetalineProcessor extends AbstractProcessor {
   private Processor delegator = null;
   
