@@ -223,8 +223,10 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 							long maskVal = ((long)mask)<<annotation.flagPos();
 							int max = annotation.max();
 							int shift = annotation.shift();
-							if(max==0) {
+							if(max==0 || max>mask) {
 								max = mask;
+							} else {
+								max ++;
 							}
 							int elevation = annotation.elevation();
 							List<JCVariableDecl> parms = metDcl.getParameters();
