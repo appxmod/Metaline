@@ -1,5 +1,6 @@
-Metaline | 元线模块 | Java注解 | ~~元宇宙射线~~ | 生成设置方法 | 多行字符串 | 自动编译Javascript
+Metaline | 元线模块 
 =========
+# Java注解 | 元宇宙射线 | 生成设置方法 | 多行字符串 | 自动编译Javascript
 
 # Java annotation processor module for multi-line string and more.
 
@@ -61,7 +62,7 @@ Metaline | 元线模块 | Java注解 | ~~元宇宙射线~~ | 生成设置方法 
 
 
 ## 二、单行配置 | Boolean/Short Preferences stored in Bits / Flags.
-### &ensp; 一行代码配置标志位方法：
+### &ensp; 一行代码生成设置方法，基于标志位操作：
 - ```js
 	private long myFlag;
 	@Metaline(flagPos=3, shift=1) public boolean getUseCookie(){ myFlag=myFlag; throw new RuntimeException(); } 
@@ -92,9 +93,13 @@ Metaline | 元线模块 | Java注解 | ~~元宇宙射线~~ | 生成设置方法 
 
 ## 使用须知：  
 <br>
-&ensp; &ensp; 在代码中定义字符串资源，肯定会增加编译体积，非常大的字符串建议用asset。  
+&ensp; &ensp; 在代码中定义字符串资源，肯定会增加编译体积，字符串非常大的话建议用asset。  
+<br>
 <br>
 &ensp; &ensp; 关于单行配置，本注解处理器只负责生成方法体，用以替代后边写好的 stub。stub分为两句，第一句指定容器变量，可以是参数传进来的，也可以是类里面的成员变量。
+<br>
+<br>
+&ensp; &ensp;开发于Android Studio 3.4，支持 IDEA 2019，不支持最新版 IDEA.
 
 
 ## TODO： 
