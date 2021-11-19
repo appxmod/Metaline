@@ -9,4 +9,4 @@
 //}
 
 rootProject.name = "Metaline"
-include ':Ku'
+include ':Metaline'
