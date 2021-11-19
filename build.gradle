@@ -1,24 +1,17 @@
-import org.gradle.internal.jvm.Jvm
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.0.1'
 
-apply plugin: 'java-library'
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
 }
 
-dependencies {
-    api(libs_clang)
-    api "com.squareup:javapoet:1.10.0"
-    testImplementation 'junit:junit:4.12'
-    //api files('libs/ecj-4.4.jar')
-    //compileOnly 'com.google.javascript:closure-compiler:v20200628'
-
-    api 'com.google.code.gson:gson:2.8.6'
-
-    api files('libs/closure-compiler-v20200628.jar')
-
-    api files(Jvm.current().getToolsJar())
-    //compileOnly "com.google.auto.service:auto-service:1.0-rc6"
-    //annotationProcessor "com.google.auto.service:auto-service:1.0-rc6"
-    //api files('libs/closure-compiler-v20190929.jar')
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
