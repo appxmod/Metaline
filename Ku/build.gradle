@@ -1,13 +1,14 @@
-import org.gradle.internal.jvm.Jvm
-
 apply plugin: 'java-library'
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-}
+import org.gradle.internal.jvm.Jvm
+
+//java {
+//    sourceCompatibility = JavaVersion.VERSION_1_8
+//}
 
 dependencies {
-    api(libs_clang)
+    //api(libs_clang)
+    api 'org.apache.commons:commons-lang3:3.9'
     api "com.squareup:javapoet:1.10.0"
     testImplementation 'junit:junit:4.12'
     //api files('libs/ecj-4.4.jar')
