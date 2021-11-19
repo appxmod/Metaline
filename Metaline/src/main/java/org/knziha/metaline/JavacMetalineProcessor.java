@@ -167,7 +167,7 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 							Compiler compiler = new Compiler();
 							CompilerOptions opt = new CompilerOptions();
 							CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(opt);
-							opt.setRenamingPolicy(VariableRenamingPolicy.ALL, PropertyRenamingPolicy.ALL_UNQUOTED);
+							opt.setRenamingPolicy(VariableRenamingPolicy.ALL, PropertyRenamingPolicy.OFF);
 							opt.setOutputCharset(StandardCharsets.UTF_8);
 							SourceFile source = SourceFile.fromCode("input.js", docComment);
 							SourceFile extern = SourceFile.fromCode("extern.js","");
