@@ -3,23 +3,26 @@ package org.knziha.metaline;
 import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.jscomp.CompilerOptions;
+import com.google.javascript.jscomp.PropertyRenamingPolicy;
 import com.google.javascript.jscomp.Result;
 import com.google.javascript.jscomp.SourceFile;
+import com.google.javascript.jscomp.VariableRenamingPolicy;
 import com.squareup.javapoet.TypeName;
-import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.model.JavacElements;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.tree.JCTree.JCAssign;
 import com.sun.tools.javac.tree.JCTree.JCBinary;
+import com.sun.tools.javac.tree.JCTree.JCBlock;
 import com.sun.tools.javac.tree.JCTree.JCExpression;
 import com.sun.tools.javac.tree.JCTree.JCExpressionStatement;
 import com.sun.tools.javac.tree.JCTree.JCFieldAccess;
+import com.sun.tools.javac.tree.JCTree.JCIdent;
 import com.sun.tools.javac.tree.JCTree.JCIf;
 import com.sun.tools.javac.tree.JCTree.JCLiteral;
 import com.sun.tools.javac.tree.JCTree.JCMethodDecl;
+import com.sun.tools.javac.tree.JCTree.JCNewClass;
 import com.sun.tools.javac.tree.JCTree.JCPrimitiveTypeTree;
 import com.sun.tools.javac.tree.JCTree.JCStatement;
 import com.sun.tools.javac.tree.JCTree.JCThrow;
@@ -159,20 +162,26 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 						docComment=docComment.replaceAll(" ?([={}<>;,+\\-]) ?","$1");
 					}
 					if(annotation.compile()) {
-						SourceFile source = SourceFile.fromCode("input.js", docComment);
-						SourceFile extern = SourceFile.fromCode("extern.js","");
-						CompilerOptions opt = new CompilerOptions();
-						//opt.set;
-						Compiler compiler = new Compiler();
-						CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(opt);
-						Result res = compiler.compile(extern, source, opt);
-						opt.setOutputCharset(StandardCharsets.UTF_8);
-						CMN.Log("编译JS", field.getSimpleName(), res.success);
-						if(res.success) {
-							//CMN.Log("-->成功", compiler.toSource());
-							docComment = compiler.toSource();
-						} else {
-							CMN.Log("-->失败", res.errors.toString());
+						// https://stackoverflow.com/questions/14576782/closure-compiler-options
+						try {
+							Compiler compiler = new Compiler();
+							CompilerOptions opt = new CompilerOptions();
+							CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(opt);
+							opt.setRenamingPolicy(VariableRenamingPolicy.ALL, PropertyRenamingPolicy.ALL_UNQUOTED);
+							opt.setOutputCharset(StandardCharsets.UTF_8);
+							SourceFile source = SourceFile.fromCode("input.js", docComment);
+							SourceFile extern = SourceFile.fromCode("extern.js","");
+							
+							Result res = compiler.compile(extern, source, opt);
+							CMN.Log("编译JS", field.getSimpleName(), res.success);
+							if(res.success) {
+								docComment = compiler.toSource();
+								CMN.Log("-->成功", docComment);
+							} else {
+								CMN.Log("-->失败", res.errors.toString());
+							}
+						} catch (Exception e) {
+							CMN.Log("编译JS-->失败", e);
 						}
 					}
 					JCLiteral doclet = maker.Literal(docComment);

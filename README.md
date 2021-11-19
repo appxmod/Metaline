@@ -22,10 +22,15 @@ Metaline | 元线模块
 
 - ```js
 	dependencies {
-		compileOnly "com.gitee.knziha:Metaline:1.8"
-		annotationProcessor "com.gitee.knziha:Metaline:1.8"
-		testCompileOnly "com.gitee.knziha:Metaline:1.8"
-		testAnnotationProcessor "com.gitee.knziha:Metaline:1.8"
+		// gitee
+		compileOnly "com.gitee.knziha:Metaline:2.1"
+		annotationProcessor "com.gitee.knziha:Metaline:2.1"
+		testCompileOnly "com.gitee.knziha:Metaline:2.1"
+		testAnnotationProcessor "com.gitee.knziha:Metaline:2.1"
+		
+		// github
+		compileOnly "com.github.KnIfER:Metaline:2.1"
+		annotationProcessor "com.github.KnIfER:Metaline:2.1"
 	}
 
 
