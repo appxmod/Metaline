@@ -45,7 +45,7 @@ Usage :
 &ensp;
 <br>
 
-## 二、单行配置 | Bit / Flag Option Methods
+## 二、单行配置 | Bit / Flag Preference Methods
 ### &ensp; 一行代码配置标志位方法：
 - ```js
 	@Metaline(flagPos=3, shift=1) public static boolean getUseCookie(long flag){ flag=flag; throw new RuntimeException(); } ```
