@@ -1,32 +1,32 @@
-Metaline | 元线模块 | Java注解 | ~~元宇宙射线~~
+Metaline | 元线模块 | Java注解 | ~~元宇宙射线~~ | 生成设置方法 | 多行字符串 | 自动编译Javascript
 =========
 
-> An annotation processor module for multi-line string and more.
+# Java annotation processor module for multi-line string and more.
 
 # Usage | 使用 （从 JitPack 导入） : 
 
 &ensp;
 **Step 1.**  Add it in your **root build.gradle** at the end of repositories:
 
-- ```css
+- ```js
 	allprojects {
 		repositories {
-			...
+			//...
 			maven { url 'https://jitpack.io' }
 		}
-	}
-```
+	}  
+
 
 &ensp; **Step 2.** Add the **dependency**
 
-- ```css
+- ```js
 	dependencies {
-		compileOnly "com.gitee.knziha:Metaline:lastest"
-		annotationProcessor "com.gitee.knziha:Metaline:lastest"
-		testCompileOnly "com.gitee.knziha:Metaline:lastest"
-		testAnnotationProcessor "com.gitee.knziha:Metaline:lastest"
+		compileOnly "com.gitee.knziha:Metaline:1.8"
+		annotationProcessor "com.gitee.knziha:Metaline:1.8"
+		testCompileOnly "com.gitee.knziha:Metaline:1.8"
+		testAnnotationProcessor "com.gitee.knziha:Metaline:1.8"
 	}
-```
+
 
 # Features | 特性
 
@@ -38,7 +38,7 @@ Metaline | 元线模块 | Java注解 | ~~元宇宙射线~~
 	  Like Good 
 		Old Days.
  	*/
-	@Metaline static String text;```
+	@Metaline static String text;
 ### &ensp; 编译 JavaScript： | Java loves Javascript.
 - ```js
 	// use Google Closure Compiler to compile your javascript snippets
@@ -56,9 +56,9 @@ Metaline | 元线模块 | Java注解 | ~~元宇宙射线~~
 		}
 	 */
 	@Metaline(trim=true, compile=true)
-	public final static String ForceResizable = "";```
-&ensp;
-<br>
+	public final static String ForceResizable = "";
+
+
 
 ## 二、单行配置 | Boolean/Short Preferences stored in Bits / Flags.
 ### &ensp; 一行代码配置标志位方法：
@@ -66,13 +66,13 @@ Metaline | 元线模块 | Java注解 | ~~元宇宙射线~~
 	private long myFlag;
 	@Metaline(flagPos=3, shift=1) public boolean getUseCookie(){ myFlag=myFlag; throw new RuntimeException(); } 
 	@Metaline(flagPos=3, shift=1) public void setUseCookie(boolean value){ myFlag=myFlag; throw new RuntimeException(); } 
-```
-&ensp;
+
+
 <br>
 
 ## 三、删除方法 | Strip / Remove Methods.
 ### &ensp; 比如删除 androidx/appcompat 支持库中的 NightMode：
-- ```javascript
+- ```js
 	@StripMethods(keys="Night")
 	public class AppCompatActivity
 	...
@@ -84,7 +84,9 @@ Metaline | 元线模块 | Java注解 | ~~元宇宙射线~~
 	...
 	// not perfect. in this case you still need to modify 
 	//  one of the method AppCompatDelegateImpl/attachBaseContext2
-	//  manually.```
+	//  manually.
+
+
 <br>
 
 
