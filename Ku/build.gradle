@@ -1,4 +1,6 @@
 apply plugin: 'java-library'
+//apply plugin: 'com.github.dcendents.android-maven'  
+
 
 import org.gradle.internal.jvm.Jvm
 
