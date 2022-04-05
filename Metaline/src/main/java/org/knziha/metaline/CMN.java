@@ -9,7 +9,7 @@ import java.io.PrintStream;
 //common
 class CMN {
 	public static void Log(Object... o) {
-		StringBuilder msg= new StringBuilder();
+		StringBuilder msg = new StringBuilder("> Metaline :");
 		if(o!=null)
 		for (Object o1 : o) {
 			if(o1!=null) {
@@ -57,6 +57,6 @@ class CMN {
 			if(msg.length()>0) msg.append(", ");
 			msg.append(o1);
 		}
-		System.out.println("fatal poison "+msg.toString());
+		System.out.println(msg);
 	}
 }

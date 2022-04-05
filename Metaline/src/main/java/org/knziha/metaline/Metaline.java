@@ -22,4 +22,6 @@ public @interface Metaline {
 	String charset() default "";
 	
 	boolean compile() default false;
+	
+	int log() default 0;
 }

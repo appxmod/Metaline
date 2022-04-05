@@ -95,6 +95,7 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 		for (Element field : fields) {
 			Metaline annotation = field.getAnnotation(Metaline.class);
 			ElementKind KIND = field.getKind();
+			int log = annotation.log();
 			if(KIND == ElementKind.FIELD||KIND==ElementKind.LOCAL_VARIABLE) {
 				String docComment = elementUtils.getDocComment(field);
 				String file = annotation.file();
@@ -104,7 +105,6 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 				JCVariableDecl varDcl = (JCVariableDecl) elementUtils.getTree(field);
 				TypeName typeName = TypeName.get(field.asType());
 				String name = typeName.toString();
-				CMN.Log("processing...", System.getProperty("java.class.path"));
 				if(fromFile) {
 					File path = null;
 					if(!file.contains(":")||!file.startsWith("/")) {
@@ -173,21 +173,21 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 							SourceFile extern = SourceFile.fromCode("extern.js","");
 							
 							Result res = compiler.compile(extern, source, opt);
-							CMN.Log("编译JS", field.getSimpleName(), res.success);
+							if(log>0) CMN.Log("编译JS", field.getSimpleName(), res.success);
 							if(res.success) {
 								docComment = compiler.toSource();
-								CMN.Log("-->成功", docComment);
+								if(log>0) CMN.Log("-->成功", docComment);
 							} else {
-								CMN.Log("-->失败", res.errors.toString());
+								if(log>0) CMN.Log("-->失败", res.errors.toString());
 							}
 						} catch (Exception e) {
-							CMN.Log("编译JS-->失败", e);
+							if(log>0) CMN.Log("编译JS-->失败", e);
 						}
 					}
 					JCLiteral doclet = maker.Literal(docComment);
 					if(name.equals(String.class.getName())) {
 						varDcl.init = doclet;
-						CMN.Log("string...", varDcl.init);
+						if(log>0) CMN.Log("string...", varDcl.init);
 					} else if(name.equals("byte[]")) {
 						if(false) {
 							byte[] data = docComment.getBytes();
@@ -213,11 +213,11 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 				//TypeName typeName = TypeName.get();
 				//String name = typeName.toString();
 				//metDcl.body = maker.Block()
-				CMN.Log(field, metDcl, metDcl.body.flags);
+				if(log>0) CMN.Log(field, metDcl, metDcl.body.flags);
 				List<JCStatement> statements = metDcl.body.stats;
 				//CMN.Log(statements.toArray());
 				JCStatement _1st = statements.get(0);
-				CMN.Log("_1st", _1st);
+				if(log>0) CMN.Log("_1st", _1st);
 				
 				JCTree retType = metDcl.getReturnType();
 				if(retType instanceof JCPrimitiveTypeTree) {
@@ -261,7 +261,7 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 									finalExpr = maker.Binary(Tag.PLUS, finalExpr, maker.Literal(annotation.elevation()));
 								}
 								finalExpr = maker.TypeCast(maker.TypeIdent(TypeTag.INT), finalExpr);
-								CMN.Log(121,finalExpr);
+								if(log>0) CMN.Log(121,finalExpr);
 								metDcl.body = maker.Block(0, List.from(new JCStatement[]{maker.Return(finalExpr)}));
 							}
 							else if(RETType.typetag==TypeTag.BOOLEAN) {//get boolean
@@ -275,7 +275,7 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 									}
 								}
 								if(TogglePosFlag) {//toggle boolean
-									CMN.Log("TogglePosFlag");
+									if(log>0) CMN.Log("TogglePosFlag");
 									JCExpression fetVal = maker.Binary(Tag.EQ, maker.Binary(Tag.BITAND, flag, maker.Literal(maskVal)), maker.Literal(0));
 									
 									Names names = Names.instance(context);
@@ -301,7 +301,7 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 											maker.If(maker.Parens(bEmptyEval), maker.Exec(FlagMaskPosPutOne), null), //如果原来为空，现在不为空
 											maker.Return(finalExpr)
 									}));
-									CMN.Log("TogglePosFlag2", metDcl.body.toString());
+									if(log>0) CMN.Log("TogglePosFlag2", metDcl.body.toString());
 								} else {
 									JCBinary core = maker.Binary(Tag.BITAND, flag, maker.Literal(maskVal));
 									JCExpression finalExpr = maker.Binary(shift==0?Tag.NE:Tag.EQ, maker.Parens(core), maker.Literal(0));
@@ -348,7 +348,7 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 									finalExpr = maker.Binary(Tag.SL, maker.Parens(finalExpr), maker.Literal(flagPos));
 									finalExpr = maker.Binary(Tag.BITOR, maker.Parens(core), maker.Parens(finalExpr));
 									metDcl.body = maker.Block(0, List.from(new JCStatement[]{maker.Exec(maker.Assign(flag, finalExpr))}));
-									CMN.Log("111", maker.Parens(core), metDcl.body);
+									if(log>0) CMN.Log("111", maker.Parens(core), metDcl.body);
 								}
 							}
 						}
@@ -357,10 +357,10 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 								//CMN.Log(((JCParens)((JCIf)_1st).cond).expr);
 								JCStatement thenExp = ((JCIf) _1st).thenpart;
 								if(thenExp instanceof JCExpressionStatement) {
-									CMN.Log(((JCExpressionStatement)thenExp).expr);
+									if(log>0) CMN.Log(((JCExpressionStatement)thenExp).expr);
 								}
 								if(thenExp instanceof JCBlock) {
-									CMN.Log(((JCBlock)thenExp).stats.get(0));
+									if(log>0) CMN.Log(((JCBlock)thenExp).stats.get(0));
 								}
 								
 							}
