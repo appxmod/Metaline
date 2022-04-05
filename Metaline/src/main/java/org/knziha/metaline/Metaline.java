@@ -24,4 +24,6 @@ public @interface Metaline {
 	boolean compile() default false;
 	
 	int log() default 0;
+	
+	boolean fin() default true;
 }

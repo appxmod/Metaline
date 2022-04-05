@@ -8,6 +8,7 @@ import com.google.javascript.jscomp.Result;
 import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.jscomp.VariableRenamingPolicy;
 import com.squareup.javapoet.TypeName;
+import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.model.JavacElements;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
@@ -210,6 +211,7 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 			}
 			else if(KIND == ElementKind.METHOD){
 				JCMethodDecl metDcl = (JCMethodDecl) elementUtils.getTree(field);
+				if(annotation.fin()) metDcl.mods.flags |= Flags.FINAL;
 				//TypeName typeName = TypeName.get();
 				//String name = typeName.toString();
 				//metDcl.body = maker.Block()
