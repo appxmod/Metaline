@@ -11,7 +11,7 @@ import org.gradle.internal.jvm.Jvm
 dependencies {
     //api(libs_clang)
     api 'org.apache.commons:commons-lang3:3.9'
-    api "com.squareup:javapoet:1.10.0"
+    api "com.squareup:javapoet:1.11.1"
     testImplementation 'junit:junit:4.12'
     //api files('libs/ecj-4.4.jar')
     //compileOnly 'com.google.javascript:closure-compiler:v20200628'
@@ -19,10 +19,27 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     //implementation files('libs/closure-compiler-v20200628.jar')
-    implementation 'com.google.javascript:closure-compiler:v20211107'
+    api 'com.google.javascript:closure-compiler:v20211107'
+    //api 'net.lingala.zip4j:zip4j:2.9.1'
 
+    //JDK 1.8 JCTree API
     implementation files(Jvm.current().getToolsJar())
+
     //compileOnly "com.google.auto.service:auto-service:1.0-rc6"
     //annotationProcessor "com.google.auto.service:auto-service:1.0-rc6"
     //api files('libs/closure-compiler-v20190929.jar')
 }
+
+
+apply plugin: 'maven-publish'
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            groupId "org.appxmod.metaline"
+            artifactId "Metaline"
+            version "1.0.0"
+        }
+    }
+}
+build.finalizedBy publishToMavenLocal
