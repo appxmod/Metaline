@@ -53,6 +53,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 
 
 @SupportedAnnotationTypes({"org.knziha.metaline.Metaline"})
@@ -65,6 +66,10 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 	@Override
 	public void init(final ProcessingEnvironment procEnv) {
 		super.init(procEnv);
+		final String initMsg = "> Metaline: init";
+		System.out.println(initMsg);
+		CMN.messager = procEnv.getMessager();
+		CMN.messager.printMessage(Diagnostic.Kind.WARNING, initMsg);
 		this.elementUtils = (JavacElements) procEnv.getElementUtils();
 		JavacProcessingEnvironment jcEnv = null;
 		if (procEnv instanceof JavacProcessingEnvironment) {
@@ -74,13 +79,18 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 				Field f = procEnv.getClass().getDeclaredField("delegate");
 				f.setAccessible(true);
 				jcEnv = (JavacProcessingEnvironment) f.get(procEnv);
-				// CMN.Log(jcEnv);
+				 CMN.Log(jcEnv);
 			} catch (Exception e) {
 				CMN.Log(e);
 			}
 		}
 		if (jcEnv!=null) {
 			this.maker = TreeMaker.instance(context=jcEnv.getContext());
+		} else {
+			CMN.messager.printMessage(Diagnostic.Kind.ERROR
+				, "JavacProcessingEnvironment Is NOT Available! Try Downgrading to IDEA 2019 \n\t"
+					+"or add '-Djps.track.ap.dependencies=false' to BUILD->COMPILER->SHARED VM OPTIONS!\n\t"
+					+"see https://stackoverflow.com/questions/65128763");
 		}
 	}
 	
@@ -92,9 +102,16 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 	
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
+		if(maker==null)
+			return false;
 		Set<? extends Element> fields = roundEnv.getElementsAnnotatedWith(Metaline.class);
+		boolean haveNoIdea = CMN.haveNoIdea;
 		for (Element field : fields) {
 			Metaline annotation = field.getAnnotation(Metaline.class);
+			if(!haveNoIdea) {
+				CMN.haveNoIdea = roundEnv.getElementsAnnotatedWith(HaveNoIdea.class).size()>0;
+				haveNoIdea = true;
+			}
 			ElementKind KIND = field.getKind();
 			int log = annotation.log();
 			if(KIND == ElementKind.FIELD||KIND==ElementKind.LOCAL_VARIABLE) {

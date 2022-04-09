@@ -5,9 +5,15 @@ import com.sun.tools.javac.tree.JCTree;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import javax.annotation.processing.Messager;
+import javax.tools.Diagnostic;
+
 
 //common
 class CMN {
+	public static Messager messager;
+	public static boolean haveNoIdea;
+	
 	public static void Log(Object... o) {
 		StringBuilder msg = new StringBuilder("> Metaline :");
 		if(o!=null)
@@ -57,6 +63,9 @@ class CMN {
 			if(msg.length()>0) msg.append(", ");
 			msg.append(o1);
 		}
-		System.out.println(msg);
+		if(haveNoIdea && messager!=null)
+			messager.printMessage(Diagnostic.Kind.WARNING, msg);
+		else
+			System.out.println(msg);
 	}
 }
