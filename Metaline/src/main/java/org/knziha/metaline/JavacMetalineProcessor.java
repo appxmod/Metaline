@@ -54,6 +54,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
 
 
 @SupportedAnnotationTypes({"org.knziha.metaline.Metaline"})
@@ -94,6 +95,27 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 		}
 	}
 	
+	// https://stackoverflow.com/questions/22494596/eclipse-annotation-processor-get-project-path
+	String getProjectPath() {
+		try {
+			JavaFileObject generationForPath = processingEnv.getFiler().createSourceFile("PathTest"/* + getClass().getSimpleName()*/);
+			//Writer writer = generationForPath.openWriter();
+			String path = generationForPath.toUri().getPath();
+			int idx = path.lastIndexOf("/", path.indexOf("/generated/")-1);
+			path = path.substring(0, idx);
+			if (path.startsWith("/") && path.contains(":")) {
+				path = path.substring(1);
+			}
+			//writer.close();
+			//generationForPath.delete();
+			return path;
+		} catch (Exception e) {
+			CMN.messager.printMessage(Diagnostic.Kind.WARNING, "Unable to determine source file path!");
+			CMN.Log(e);
+		}
+		return "";
+	}
+	
 	@Override public SourceVersion getSupportedSourceVersion() {
 		return SourceVersion.latest();
 	}
@@ -125,9 +147,9 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 				String name = typeName.toString();
 				if(fromFile) {
 					File path = null;
-					if(!file.contains(":")||!file.startsWith("/")) {
+					if(!file.contains(":")&&!file.startsWith("/")) {
 						try {
-							File project_path = new File("");
+							File project_path = new File(getProjectPath());
 							path = new File(project_path.getCanonicalFile(), file);
 						} catch (IOException ignored) { }
 					}
