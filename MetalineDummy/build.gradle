@@ -1,0 +1,24 @@
+apply plugin: 'java-library'
+//apply plugin: 'com.github.dcendents.android-maven'  
+
+
+//java {
+//    sourceCompatibility = JavaVersion.VERSION_1_8
+//}
+
+dependencies {
+}
+
+
+apply plugin: 'maven-publish'
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            groupId "org.appxmod.metaline"
+            artifactId "Metaline"
+            version "1.0.0"
+        }
+    }
+}
+build.finalizedBy publishToMavenLocal

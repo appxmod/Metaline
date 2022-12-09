@@ -10,3 +10,4 @@
 
 rootProject.name = "Metaline"
 include ':Metaline'
+include ':MetalineDummy'

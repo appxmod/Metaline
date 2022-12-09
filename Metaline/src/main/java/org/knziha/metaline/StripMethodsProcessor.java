@@ -69,7 +69,8 @@ public final class StripMethodsProcessor extends AbstractProcessor {
 			}
 			String[] keys = annotation.keys();
 			ElementKind KIND = field.getKind();
-			CMN.Log("StripMethods::", annotation, KIND);
+			int log = annotation.log();
+			if(log>0) CMN.Log("StripMethods::", annotation, KIND);
 			if(KIND == ElementKind.CLASS) {
 				ArrayList<JCTree> defs;
 				JCTree.JCClassDecl laDcl = (JCTree.JCClassDecl) elementUtils.getTree(field);
@@ -96,8 +97,8 @@ public final class StripMethodsProcessor extends AbstractProcessor {
 				defs = new ArrayList<>(laDcl.defs);
 				for (int i = defs.size()-1; i >= 0; i--) {
 					JCTree member = defs.get(i);
-					//CMN.Log("member::", member);
 					boolean b1 = member instanceof JCTree.JCMethodDecl;
+					//CMN.Log("member::", member, b1);
 					if (b1) {
 						if (keyInString(keys, ((JCTree.JCMethodDecl) member).getName()))
 						{
@@ -123,12 +124,12 @@ public final class StripMethodsProcessor extends AbstractProcessor {
 					if (b1) {
 						JCTree.JCMethodDecl metDcl = (JCTree.JCMethodDecl) member;
 						StripMethods metAnnot = metDcl.sym.getAnnotation(StripMethods.class);
-						if (metAnnot!=null && metAnnot.strip()) {
+						if (metAnnot!=null && metAnnot.stripMethod()) {
 							defs.remove(i);
 							continue;
 						}
 						if (metDcl.body!=null) {
-							//CMN.Log("metDcl.body::", metDcl.body);
+							//CMN.Log(((JCTree.JCMethodDecl) member).getName(), "metDcl.body::", metDcl.body, metDcl.body.stats.length());
 							ArrayList<JCTree.JCStatement> statements = new ArrayList<>(metDcl.body.stats);
 							for (int j = statements.size()-1; j >= 0; j--) {
 								if (keyInString(keys, statements.get(j)))

@@ -96,8 +96,11 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 	}
 	
 	// https://stackoverflow.com/questions/22494596/eclipse-annotation-processor-get-project-path
+	static String projectPath;
 	String getProjectPath() {
-		try {
+		if (projectPath!=null)
+			return projectPath;
+		try { // slow
 			JavaFileObject generationForPath = processingEnv.getFiler().createSourceFile("PathTest"/* + getClass().getSimpleName()*/);
 			//Writer writer = generationForPath.openWriter();
 			String path = generationForPath.toUri().getPath();
@@ -107,8 +110,8 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 				path = path.substring(1);
 			}
 			//writer.close();
-			//generationForPath.delete();
-			return path;
+			generationForPath.delete();
+			return projectPath = path;
 		} catch (Exception e) {
 			CMN.messager.printMessage(Diagnostic.Kind.WARNING, "Unable to determine source file path!");
 			CMN.Log(e);
@@ -147,9 +150,18 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 				String name = typeName.toString();
 				if(fromFile) {
 					File path = null;
-					if(!file.contains(":")&&!file.startsWith("/")) {
+					if (annotation.rootPath().length() > 0) {
+						try {
+							File project_path = new File(annotation.rootPath());
+							if(log>0) CMN.Log("fast projectPath=" + project_path);
+							path = new File(project_path.getCanonicalFile(), file);
+						} catch (IOException ignored) {
+						}
+					}
+					if(path==null && !file.contains(":")&&!file.startsWith("/")) {
 						try {
 							File project_path = new File(getProjectPath());
+							CMN.Log("projectPath="+project_path);
 							path = new File(project_path.getCanonicalFile(), file);
 						} catch (IOException ignored) { }
 					}
@@ -274,7 +286,7 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 							int max = annotation.max();
 							int shift = annotation.shift();
 							if(max==0 || max>mask) {
-								max = mask;
+								max = mask + 1;
 							} else {
 								max ++;
 							}

@@ -26,6 +26,4 @@ public @interface Metaline {
 	int log() default 0;
 	
 	boolean fin() default true;
-	
-	String rootPath() default "";
 }

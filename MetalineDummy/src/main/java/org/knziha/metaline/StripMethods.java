@@ -12,7 +12,5 @@ public @interface StripMethods {
 	String[] keys() default {};
 	
 	boolean stripMethod() default false;
-	
-	int log() default 0;
 	//String key() default "";
 }
