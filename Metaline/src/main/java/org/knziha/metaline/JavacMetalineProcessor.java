@@ -300,6 +300,7 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 							//CMN.Log("TogglePosFlag", TogglePosFlag);
 							
 							if(RETType.typetag==TypeTag.INT) {
+								int debugVal = annotation.debug();
 								//CMN.Log("mask", mask);
 								JCBinary core = maker.Binary(Tag.SR, flag, maker.Literal(flagPos));
 								JCBinary basic = maker.Binary(Tag.BITAND, maker.Parens(core), maker.Literal(mask));
@@ -312,6 +313,9 @@ public final class JavacMetalineProcessor extends AbstractProcessor {
 								}
 								if(elevation>0) {
 									finalExpr = maker.Binary(Tag.PLUS, finalExpr, maker.Literal(annotation.elevation()));
+								}
+								if(debugVal>=0) {
+									finalExpr = maker.Literal(debugVal);
 								}
 								finalExpr = maker.TypeCast(maker.TypeIdent(TypeTag.INT), finalExpr);
 								if(log>0) CMN.Log(121,finalExpr);
